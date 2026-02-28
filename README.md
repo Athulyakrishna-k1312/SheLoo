@@ -3,6 +3,7 @@
 </p>
 
 # SheLoo 🎯
+![Screenshot1](https://github.com/Athulyakrishna-k1312/SheLoo/blob/4dd6a13986e469e682a10a14f15e7d182da93e96/SheLoo.png)
 
 ## Basic Details
 
@@ -12,7 +13,7 @@
 - Athulyakrishna K - Government Engineering College, Palakkad
 - Vismaya T R - Government Engineering College, Palakkad
 
-**Hosted Project Link:** [Add your hosted project link here]
+**Hosted Project Link:** ![SheLoo](https://athulyakrishna-k1312.github.io/SheLoo/)
 
 ---
 
@@ -70,11 +71,50 @@ cd SheLoo
 ## Project Documentation
 -**Screenshots**
 
-![Screenshot1](Add screenshot 1 here)
+![Screenshot1](https://github.com/Athulyakrishna-k1312/SheLoo/blob/6c7b0f424e69ee738fe54649b90d755c72d80abb/map_view.png)
+![Screenshot1](https://github.com/Athulyakrishna-k1312/SheLoo/blob/4dd6a13986e469e682a10a14f15e7d182da93e96/map_view2.png)
 Main map view showing toilets with color-coded safety ratings
 
-![Screenshot2](Add screenshot 2 here)
+![Screenshot2](https://github.com/Athulyakrishna-k1312/SheLoo/blob/6c7b0f424e69ee738fe54649b90d755c72d80abb/review.png)  
 Review page where users can submit ratings for cleanliness, lighting, and safety
 
-![Screenshot3](Add screenshot 3 here)
+![Screenshot3](https://github.com/Athulyakrishna-k1312/SheLoo/blob/6c7b0f424e69ee738fe54649b90d755c72d80abb/map_redirection.png)
 Navigation page showing directions to the selected toilet
+
+## Diagrams
+
+**System Architecture:** ![System Architecture](https://github.com/Athulyakrishna-k1312/SheLoo/blob/bae43cea4406f9678baafe03ebbeacd4bcc2c625/System%20Architecture%20Diagram.png)
+**Application Workflow:**![WorkFlow](https://github.com/Athulyakrishna-k1312/SheLoo/blob/b7728d3a67c5585f6ab50003de67418bea38cf47/workflow.png)
+**UseCase Diagram:**![UseCase Diagram](https://github.com/Athulyakrishna-k1312/SheLoo/blob/b7728d3a67c5585f6ab50003de67418bea38cf47/UseCase.png)
+
+## API Documentation
+
+-Base URL: N/A (local browser-based app using OSM API)
+
+-Endpoints: None (no backend yet; reviews are stored in localStorage)
+
+## Project Demo
+
+Video: [demo video](https://drive.google.com/file/d/1i15hHAWI17ZKx07VdZYA_UYuLUjyCGSi/view?usp=sharing)
+Shows SheLoo’s features, user flow, and interactive map.
+
+## AI Tools Used 
+
+ChatGPT: Assisted with code structuring, debugging, and optimization
+
+Usage: Generating boilerplate JS, improving map functionality
+
+**Human Contributions:**
+
+-Custom business logic
+
+-Frontend implementation (interactive map, reviews)
+
+-UI/UX design and testing
+
+## Team Contributions
+
+Athulyakrishna K: Frontend development, OSM integration, map features, reviews
+
+Vismaya T R: UI/UX design, feature testing, documentation
+
