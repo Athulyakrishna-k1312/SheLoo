@@ -65,3 +65,16 @@ cd SheLoo
 - Allow location access for real-time mapping
 
 - Search or use current location to see nearby toilets
+
+
+## Project Documentation
+-**Screenshots**
+
+![Screenshot1](Add screenshot 1 here)
+Main map view showing toilets with color-coded safety ratings
+
+![Screenshot2](Add screenshot 2 here)
+Review page where users can submit ratings for cleanliness, lighting, and safety
+
+![Screenshot3](Add screenshot 3 here)
+Navigation page showing directions to the selected toilet
