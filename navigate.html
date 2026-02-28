@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SheLoo | Navigate</title>
+<style>
+body, html {
+    margin:0;
+    padding:0;
+    font-family:'Poppins', sans-serif;
+    background:#fdf5f2;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    text-align:center;
+}
+h2 { color:#b57a66; margin-bottom:20px; }
+button {
+    padding:12px 25px;
+    border-radius:50px;
+    border:none;
+    background-color:#b57a66;
+    color:white;
+    font-size:1rem;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    margin-top:15px;
+}
+button:hover { background-color:#d4a391; }
+</style>
+</head>
+<body>
+
+<h2 id="info">Preparing your route...</h2>
+<button id="openMaps">Open Google Maps</button>
+
+<script>
+// --- Get both user and destination coordinates from URL ---
+function getQueryParams(){
+    const params = new URLSearchParams(window.location.search);
+    return {
+        userLat: parseFloat(params.get('userLat')),
+        userLon: parseFloat(params.get('userLon')),
+        destLat: parseFloat(params.get('lat')),
+        destLon: parseFloat(params.get('lon')),
+        name: params.get('name')
+    };
+}
+
+const data = getQueryParams();
+
+// --- Friendly message for user ---
+document.getElementById('info').innerText = 
+  `Opening route to: ${data.name || 'Toilet'} in Google Maps.\n
+   After checking the route, you will be redirected to submit a review.`;
+
+// --- Construct Google Maps URL ---
+const googleMapsURL = `https://www.google.com/maps/dir/?api=1&origin=${data.userLat},${data.userLon}&destination=${data.destLat},${data.destLon}&travelmode=walking`;
+
+// --- Open Google Maps automatically ---
+window.open(googleMapsURL, '_blank');
+
+// --- Redirect to review page after 5 seconds ---
+setTimeout(()=>{
+    const reviewURL = `review.html?lat=${data.destLat}&lon=${data.destLon}&name=${encodeURIComponent(data.name)}`;
+    window.location.href = reviewURL;
+}, 5000); // adjust delay as needed
+
+// --- Manual button fallback ---
+document.getElementById('openMaps').onclick = ()=>{
+    window.open(googleMapsURL, '_blank');
+    const reviewURL = `review.html?lat=${data.destLat}&lon=${data.destLon}&name=${encodeURIComponent(data.name)}`;
+    window.location.href = reviewURL;
+};
+</script>
+
+</body>
+</html>

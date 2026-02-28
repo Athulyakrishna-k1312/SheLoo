@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SheLoo | Safe Spaces Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+body, html { margin:0; padding:0; font-family:'Poppins', sans-serif; background:#fdf5f2; }
+.container { max-width:900px; margin:40px auto; text-align:center; }
+h1 { font-size:3rem; color:#b57a66; margin-bottom:20px; }
+input[type=text] { width:250px; padding:12px; border-radius:30px; border:1px solid #b57a66; font-size:1rem; margin:5px; }
+button { padding:12px 20px; border-radius:50px; border:none; background-color:#b57a66; color:white; font-size:1rem; cursor:pointer; transition:all 0.3s ease; margin:5px; }
+button:hover, input:hover { background-color:#d4a391; }
+#map { height:70vh; margin-top:30px; border-radius:15px; box-shadow:0 4px 15px rgba(181,122,102,0.4); }
+
+/* Legend under map */
+#legend {
+    background: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #333;
+    margin: 15px auto 40px auto;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; }
+.legend-color {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 1px solid #999;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Find Nearby Safe Spaces</h1>
+
+<div>
+    <button onclick="useLocation()">Use My Location</button>
+    <input type="text" id="placeInput" placeholder="Enter place name e.g. Sreekrishnapuram, Palakkad">
+    <button onclick="searchPlace()">Search</button>
+</div>
+
+<div id="map"></div>
+
+<!-- Legend below map -->
+<div id="legend">
+    <div class="legend-item"><span class="legend-color" style="background:#4CAF50;"></span> Highly Recommended (4-5)</div>
+    <div class="legend-item"><span class="legend-color" style="background:#FFC107;"></span> Recommended (3-4)</div>
+    <div class="legend-item"><span class="legend-color" style="background:#F44336;"></span> Not Recommended (&lt;3)</div>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+// --- Map Setup ---
+let map;
+let userMarker;
+
+// --- Helper functions ---
+function distance(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R*c;
+}
+
+function getColor(rating){
+    if(rating>=4) return '#4CAF50';
+    if(rating>=3) return '#FFC107';
+    return '#F44336';
+}
+
+// --- Show map with toilets ---
+function showMap(lat, lon, toilets){
+    if(!map){
+        map = L.map('map').setView([lat, lon], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+    } else {
+        map.setView([lat, lon], 14);
+        if(map.markers){ map.markers.forEach(m => map.removeLayer(m)); }
+        map.markers = [];
+        if(userMarker) map.removeLayer(userMarker);
+    }
+
+    userMarker = L.marker([lat, lon], {title:"You are here"}).addTo(map).bindPopup("You are here").openPopup();
+
+    map.markers = [];
+    toilets.forEach(t => {
+        const marker = L.circleMarker([t.lat, t.lon], {
+            radius:10, fillColor:getColor(t.rating||3), color:'#fff', weight:1, opacity:1, fillOpacity:0.8
+        }).addTo(map);
+        marker.bindPopup(`<b>${t.name}</b><br>
+Cleanliness: ${t.cleanliness||3}/5<br>
+Lighting: ${t.lighting||3}/5<br>
+Safety: ${t.safety||3}/5<br>
+<a href="navigate.html?userLat=${lat}&userLon=${lon}&lat=${t.lat}&lon=${t.lon}&name=${encodeURIComponent(t.name)}" target="_blank">Go to Navigate →</a>`);
+        map.markers.push(marker);
+    });
+
+    const group = new L.featureGroup([...map.markers, userMarker]);
+    map.fitBounds(group.getBounds().pad(0.2));
+}
+
+// --- Fetch toilets from OSM ---
+async function fetchOSMToilets(lat, lon){
+    const radius = 3000; // 3 km
+    const query = `
+        [out:json][timeout:25];
+        (
+          node["amenity"="toilets"](around:${radius},${lat},${lon});
+          way["amenity"="toilets"](around:${radius},${lat},${lon});
+          relation["amenity"="toilets"](around:${radius},${lat},${lon});
+        );
+        out center;
+    `;
+    const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
+    try{
+        const res = await fetch(url);
+        const data = await res.json();
+        const toilets = data.elements.map(e => ({
+            name: e.tags?.name || "Public Toilet",
+            lat: e.lat || e.center?.lat,
+            lon: e.lon || e.center?.lon,
+            cleanliness: 3,
+            lighting: 3,
+            safety: 3,
+            verified: false,
+            rating:3
+        }));
+        return toilets;
+    } catch(e){
+        console.error('OSM fetch error', e);
+        return [];
+    }
+}
+
+// --- Generate fake toilets around location ---
+function generateFakeToilets(lat, lon, count=5){
+    const toilets = [];
+    for(let i=0;i<count;i++){
+        const offsetLat = (Math.random()-0.5)/100;
+        const offsetLon = (Math.random()-0.5)/100;
+        toilets.push({
+            name: `Demo Toilet ${i+1}`,
+            lat: lat+offsetLat,
+            lon: lon+offsetLon,
+            cleanliness: Math.floor(Math.random()*3)+3,
+            lighting: Math.floor(Math.random()*3)+3,
+            safety: Math.floor(Math.random()*3)+3,
+            verified: false,
+            rating: Math.floor(Math.random()*2)+3
+        });
+    }
+    return toilets;
+}
+
+// --- Use browser location ---
+function useLocation(){
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(async pos=>{
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            let toilets = await fetchOSMToilets(lat, lon);
+            if(!toilets.length) toilets = generateFakeToilets(lat, lon);
+            showMap(lat, lon, toilets);
+        }, err=>{
+            alert('Unable to get location. Try searching a place name.');
+        });
+    } else { alert('Geolocation not supported.'); }
+}
+
+// --- Search place by name ---
+function searchPlace(){
+    const query = document.getElementById('placeInput').value.trim();
+    if(!query){ alert('Enter a place name!'); return; }
+
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(async data=>{
+            if(!data || !data.length){ alert('Place not found'); return; }
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            let toilets = await fetchOSMToilets(lat, lon);
+            if(!toilets.length) toilets = generateFakeToilets(lat, lon);
+            showMap(lat, lon, toilets);
+        })
+        .catch(err => alert('Error finding place'));
+}
+</script>
+
+</body>
+</html>
