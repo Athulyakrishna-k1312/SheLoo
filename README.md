@@ -57,3 +57,11 @@ git clone https://github.com/YourRepo/SheLoo.git
 cd SheLoo
 
 # Open index.html in your browser
+```
+## Running
+
+- Open index.html in a browser
+
+- Allow location access for real-time mapping
+
+- Search or use current location to see nearby toilets
