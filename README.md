@@ -2,27 +2,27 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# SheLoo 🎯
 
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: CodeCatalyst
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Member 1: Athulyakrishna K - Government Engineering College, Palakkad
+- Member 2: Vismaya T R - Government Engineering College, Palakkad
 
 ### Hosted Project Link
 [mention your project hosted link here]
 
 ### Project Description
-[2-3 lines about what your project does]
+SheLoo is a smart, interactive map that helps women discover nearby public toilets, ranked by safety, hygiene, and overall experience—guiding them to the safest, most reliable options in real time.
 
 ### The Problem statement
-[What problem are you solving?]
+Access to clean and secure public sanitation remains a major challenge for women in India. Most existing maps focus only on location, ignoring safety, cleanliness, lighting, and crowd levels—leaving women vulnerable, especially after dark.
 
 ### The Solution
-[How are you solving it?]
+SheLoo transforms public sanitation into a data-driven, safe, and user-friendly experience. By combining toilet locations from OpenStreetMap with crowdsourced facility ratings and dynamic safety heuristics (traffic, nearby landmarks, and time-of-day risk), it provides a ranked, interactive map.
 
 ---
 
@@ -45,11 +45,11 @@
 
 ## Features
 
-List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
-- Feature 4: [Description]
+List the key features of our project:
+- Intelligent Toilet Discovery – Quickly locate nearby public toilets with real-time mapping and interactive pins.
+- Safety-First Ranking – Toilets are ranked by a dynamic safety score, considering lighting, crowd levels, surrounding area, and time-of-day risks.
+- Facility Ratings & Feedback – View cleanliness, lighting, and overall experience ratings, and contribute your own feedback to improve future recommendations.
+- Guided Navigation – Route display with ETA, gentle prompts for safe arrival, and seamless integration with directions.
 
 ---
 
@@ -66,16 +66,6 @@ List the key features of your project:
 ```bash
 [Run commands - e.g., npm start, python app.py]
 ```
-
-### For Hardware:
-
-#### Components Required
-[List all components needed with specifications]
-
-#### Circuit Setup
-[Explain how to set up the circuit]
-
----
 
 ## Project Documentation
 
@@ -374,8 +364,7 @@ python script.py -v --format json data.json
 
 If you used AI tools during development, document them here for transparency:
 
-**Tool Used:** [e.g., GitHub Copilot, v0.dev, Cursor, ChatGPT, Claude]
-
+**Tool Used:** ChatGPT
 **Purpose:** [What you used it for]
 - Example: "Generated boilerplate React components"
 - Example: "Debugging assistance for async functions"
